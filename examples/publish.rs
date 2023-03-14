@@ -2,7 +2,7 @@ use std::{thread, time::Duration};
 
 use env_logger::{Builder, Env};
 use log::{debug, info};
-use tether_agent_rs::TetherAgent;
+use tether_agent::TetherAgent;
 
 fn main() {
     println!("Rust Tether Agent publish example");
