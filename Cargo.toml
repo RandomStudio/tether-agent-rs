@@ -13,5 +13,3 @@ rmp-serde = "1.1.1"
 log = "0.4.17"
 env_logger = "0.7"
 
-[[example]]
-name = "publish"
