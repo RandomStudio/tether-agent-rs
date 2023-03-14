@@ -1,5 +1,5 @@
 use log::{debug, error, info};
-use mqtt::{Client, Message, Receiver};
+use mqtt::{Client, Message, MessageBuilder, Receiver};
 use paho_mqtt as mqtt;
 use std::{
     net::{IpAddr, Ipv4Addr},
@@ -7,6 +7,7 @@ use std::{
     time::Duration,
 };
 
+#[derive(Debug)]
 pub struct Plug {
     name: String,
     topic: String,
@@ -78,6 +79,8 @@ impl TetherAgent {
         }
     }
 
+    // TODO: return a Result with the Plug
+    // TODO: use Builder pattern instead of "optional" params?
     pub fn add_input_plug(&mut self, name: &str, qos: Option<i32>, override_topic: Option<&str>) {
         let name = String::from(name);
         let topic = String::from(override_topic.unwrap_or(&default_subscribe_topic(&name)));
@@ -86,7 +89,9 @@ impl TetherAgent {
         match self.client.subscribe(&topic, qos) {
             Ok(_res) => {
                 info!("Subscribed to topic {} OK", &topic);
-                self.input_plugs.push(Plug { name, topic, qos });
+                let plug = Plug { name, topic, qos };
+                debug!("Adding plug: {:?}", &plug);
+                self.input_plugs.push(plug);
             }
             Err(e) => {
                 error!("Error subscribing to topic {}: {:?}", &topic, e);
@@ -94,8 +99,43 @@ impl TetherAgent {
         }
     }
 
+    // TODO: return a Result with the Plug?
+    // TODO: use Builder pattern instead of "optional" params?
+    pub fn add_output_plug(&mut self, name: &str, qos: Option<i32>, override_topic: Option<&str>) {
+        let name = String::from(name);
+        let topic =
+            String::from(override_topic.unwrap_or(&build_topic(&self.role, &self.group, &name)));
+        let qos = qos.unwrap_or(1);
+
+        let plug = Plug { name, topic, qos };
+        debug!("Adding output plug: {:?}", &plug);
+        self.output_plugs.push(plug);
+    }
+
+    // TODO: check against list of InputPlugs, to see if topic matches
+    // At least return the plug definition along with the message,
+    // if it matches any
     pub fn check_messages(&self) -> Option<Message> {
         self.receiver.try_iter().find_map(|m| m)
+    }
+
+    pub fn publish_message(&self, plug_name: &str, payload: Option<&[u8]>) -> Result<(), ()> {
+        if let Some(plug) = self.output_plugs.iter().find(|p| p.name.eq(plug_name)) {
+            let message = MessageBuilder::new()
+                .topic(&plug.topic)
+                .payload(payload.unwrap_or(&[]))
+                .qos(plug.qos)
+                .finalize();
+            if let Err(e) = self.client.publish(message) {
+                error!("Error publishing: {:?}", e);
+                Err(())
+            } else {
+                Ok(())
+            }
+        } else {
+            error!("Could not find matching output plug named {}", plug_name);
+            Err(())
+        }
     }
 }
 
