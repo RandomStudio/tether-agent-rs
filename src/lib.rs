@@ -1,6 +1,7 @@
 use log::{debug, error, info};
 use mqtt::{Client, Message, MessageBuilder, Receiver};
-use paho_mqtt as mqtt;
+pub use paho_mqtt as mqtt;
+pub use rmp_serde;
 use std::{
     net::{IpAddr, Ipv4Addr},
     process,
