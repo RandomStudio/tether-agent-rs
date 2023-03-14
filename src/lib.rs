@@ -14,6 +14,18 @@ pub struct Plug {
     qos: i32,
 }
 
+impl Plug {
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+    pub fn topic(&self) -> &str {
+        &self.topic
+    }
+    pub fn qos(&self) -> i32 {
+        self.qos
+    }
+}
+
 pub struct TetherAgent {
     role: String,
     group: String,
@@ -112,11 +124,23 @@ impl TetherAgent {
         self.output_plugs.push(plug);
     }
 
-    // TODO: check against list of InputPlugs, to see if topic matches
-    // At least return the plug definition along with the message,
-    // if it matches any
-    pub fn check_messages(&self) -> Option<Message> {
-        self.receiver.try_iter().find_map(|m| m)
+    // type MessageFromInputPlug = (&[u8], &str, &Plug);
+
+    pub fn check_messages(&self) -> Option<(Message, &Plug)> {
+        if let Some(message) = self.receiver.try_iter().find_map(|m| m) {
+            let topic = message.topic();
+            if let Some(plug) = self
+                .input_plugs
+                .iter()
+                .find(|p| p.name.eq(parse_plug_name(topic)))
+            {
+                Some((message, plug))
+            } else {
+                None
+            }
+        } else {
+            None
+        }
     }
 
     pub fn publish_message(&self, plug_name: &str, payload: Option<&[u8]>) -> Result<(), ()> {

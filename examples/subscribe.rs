@@ -21,11 +21,12 @@ fn main() {
 
     for i in 1..10 {
         info!("#{i}: Checking for messages...");
-        if let Some(m) = agent.check_messages() {
-            let topic = m.topic();
-            let payload = m.payload();
+        if let Some((message, plug)) = agent.check_messages() {
+            let topic = message.topic();
+            let payload = message.payload();
             println!(
-                "Received a message on topic {} with length {} bytes",
+                "Received a message from plug named {} on topic {} with length {} bytes",
+                &plug.name(),
                 topic,
                 payload.len()
             );
