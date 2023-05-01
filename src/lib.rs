@@ -20,7 +20,7 @@ pub struct PlugDefinition {
 
 pub struct TetherAgent {
     role: String,
-    group: String,
+    id: String,
     client: Client,
     receiver: Receiver<Option<Message>>,
 }
@@ -30,8 +30,8 @@ impl TetherAgent {
         self.client.is_connected()
     }
 
-    pub fn new(agent_role: &str, agent_group: Option<&str>, tether_host: Option<IpAddr>) -> Self {
-        let tether_host = tether_host.unwrap_or(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)));
+    pub fn new(role: &str, id: Option<&str>, broker_host: Option<IpAddr>) -> Self {
+        let tether_host = broker_host.unwrap_or(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)));
 
         let broker_uri = format!("tcp://{tether_host}:1883");
 
@@ -49,8 +49,8 @@ impl TetherAgent {
         let receiver = client.start_consuming();
 
         TetherAgent {
-            role: String::from(agent_role),
-            group: String::from(agent_group.unwrap_or("any")),
+            role: String::from(role),
+            id: String::from(id.unwrap_or("any")),
             client,
             receiver,
         }
@@ -112,7 +112,7 @@ impl TetherAgent {
     ) -> Result<PlugDefinition, ()> {
         let name = String::from(name);
         let topic =
-            String::from(override_topic.unwrap_or(&build_topic(&self.role, &self.group, &name)));
+            String::from(override_topic.unwrap_or(&build_topic(&self.role, &self.id, &name)));
         let qos = qos.unwrap_or(1);
 
         let plug = PlugDefinition { name, topic, qos };
@@ -166,8 +166,8 @@ pub fn parse_agent_id(topic: &str) -> &str {
     parts[1]
 }
 
-pub fn build_topic(agent_role: &str, agent_group: &str, plug_name: &str) -> String {
-    format!("{agent_role}/{agent_group}/{plug_name}")
+pub fn build_topic(role: &str, id: &str, plug_name: &str) -> String {
+    format!("{role}/{id}/{plug_name}")
 }
 
 pub fn default_subscribe_topic(plug_name: &str) -> String {
