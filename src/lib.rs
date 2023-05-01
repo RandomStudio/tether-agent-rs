@@ -120,18 +120,11 @@ impl TetherAgent {
 
     /// Given a list of Plug Definitions, check for matches against plug name (using parsed topic)
     /// and if a message is waiting, and a match is found, return Plug Name, Message (String, Message)
-    pub fn check_messages(&self, input_plugs: &Vec<&PlugDefinition>) -> Option<(String, Message)> {
+    pub fn check_messages(&self) -> Option<(String, Message)> {
         if let Some(message) = self.receiver.try_iter().find_map(|m| m) {
             let topic = message.topic();
             let plug_name = parse_plug_name(topic);
-            if let Some(_p) = input_plugs
-                .iter()
-                .find(|plug_def| plug_def.name == plug_name)
-            {
-                Some((plug_name.into(), message))
-            } else {
-                None
-            }
+            Some((String::from(plug_name), message))
         } else {
             None
         }

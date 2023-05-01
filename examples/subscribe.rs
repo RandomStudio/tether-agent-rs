@@ -19,13 +19,11 @@ fn main() {
     let input_one = agent.create_input_plug("one", None, None).unwrap();
     let input_two = agent.create_input_plug("two", None, None).unwrap();
 
-    let input_plugs = vec![&input_one, &input_two];
-
     info!("Checking messages every 1s, 10x...");
 
     for i in 1..10 {
         info!("#{i}: Checking for messages...");
-        if let Some((plug_name, message)) = agent.check_messages(&input_plugs) {
+        if let Some((plug_name, message)) = agent.check_messages() {
             if &input_one.name == plug_name.as_str() {
                 println!(
                     "INPUT ONE: Received a message from plug named {} on topic {} with length {} bytes",
