@@ -2,7 +2,9 @@ use log::{debug, error, info};
 use mqtt::{Client, Message, MessageBuilder, Receiver};
 pub use paho_mqtt as mqtt;
 pub use rmp_serde;
+use rmp_serde::to_vec_named;
 pub use serde;
+use serde::Serialize;
 use std::{
     net::{IpAddr, Ipv4Addr},
     process,
@@ -130,7 +132,7 @@ impl TetherAgent {
         }
     }
 
-    pub fn publish_message(&self, plug: &PlugDefinition, payload: Option<&[u8]>) -> Result<(), ()> {
+    pub fn publish(&self, plug: &PlugDefinition, payload: Option<&[u8]>) -> Result<(), ()> {
         let message = MessageBuilder::new()
             .topic(&plug.topic)
             .payload(payload.unwrap_or(&[]))
@@ -142,6 +144,15 @@ impl TetherAgent {
         } else {
             Ok(())
         }
+    }
+
+    pub fn encode_and_publish<T: Serialize>(
+        &self,
+        plug: &PlugDefinition,
+        data: T,
+    ) -> Result<(), ()> {
+        let payload = to_vec_named(&data).unwrap();
+        self.publish(plug, Some(&payload))
     }
 }
 
