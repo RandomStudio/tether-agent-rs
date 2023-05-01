@@ -6,7 +6,6 @@ This means that the TetherAgent retains no "memory" of any Input or Output Plugs
 Therefore, you must keep your own individual variables which reference the Plugs you have created, or store them in a `Vec<&PlugDefinition>` as necessary.
 
 ## Publishing
-
 The following functions can be called on the `TetherAgent` instance:
 
 - `publish`: expects an already-encoded Vector slice of u8 (i.e. a buffer)
@@ -14,10 +13,8 @@ The following functions can be called on the `TetherAgent` instance:
 
 In both cases, you provide a pointer to the `PlugDefinition` so that the Agent can publish on the appropriate topic with the correct QOS for the plug.
 
-
-
 ## Subscribing
-The same function should be called as often as possible (e.g. once per frame or on a timed thread, etc.) on the `TetherAgent` instance:
+For now, checking messages is done synchronously. The same function should be called as often as possible (e.g. once per frame or on a timed thread, etc.) on the `TetherAgent` instance:
 
 - `check_messages`
 
