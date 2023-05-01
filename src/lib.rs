@@ -28,7 +28,7 @@ impl TetherAgent {
         self.client.is_connected()
     }
 
-    pub fn new(agent_role: &str, agent_group: &str, tether_host: Option<IpAddr>) -> Self {
+    pub fn new(agent_role: &str, agent_group: Option<&str>, tether_host: Option<IpAddr>) -> Self {
         let tether_host = tether_host.unwrap_or(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)));
 
         let broker_uri = format!("tcp://{tether_host}:1883");
@@ -48,7 +48,7 @@ impl TetherAgent {
 
         TetherAgent {
             role: String::from(agent_role),
-            group: String::from(agent_group),
+            group: String::from(agent_group.unwrap_or("any")),
             client,
             receiver,
         }

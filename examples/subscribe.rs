@@ -12,7 +12,7 @@ fn main() {
 
     debug!("Debugging is enabled; could be verbose");
 
-    let mut agent = TetherAgent::new("dummy", "example", None);
+    let mut agent = TetherAgent::new("RustDemoAgent", Some("example"), None);
 
     agent.connect();
 
@@ -26,7 +26,7 @@ fn main() {
         if let Some((plug_name, message)) = agent.check_messages() {
             if &input_one.name == plug_name.as_str() {
                 println!(
-                    "INPUT ONE: Received a message from plug named {} on topic {} with length {} bytes",
+                    "******** INPUT ONE:\n Received a message from plug named \"{}\" on topic {} with length {} bytes",
                     input_one.name,
                     message.topic(),
                     message.payload().len()
@@ -34,7 +34,7 @@ fn main() {
             }
             if &input_two.name == plug_name.as_str() {
                 println!(
-                    "INPUT TWO: Received a message from plug named {} on topic {} with length {} bytes",
+                    "******** INPUT TWO:\n Received a message from plug named \"{}\" on topic {} with length {} bytes",
                     input_two.name,
                     message.topic(),
                     message.payload().len()
