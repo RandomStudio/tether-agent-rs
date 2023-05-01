@@ -15,17 +15,22 @@ fn main() {
     let mut agent = TetherAgent::new("dummy", "example", None);
 
     agent.connect();
-    agent.add_output_plug("emptyMessages", None, None);
-    agent.add_output_plug("booleanMessages", None, None);
+
+    let empty_message_output = agent
+        .create_output_plug("emptyMessage", None, None)
+        .unwrap();
+    let boolean_message_output = agent
+        .create_output_plug("booleanMessage", None, None)
+        .unwrap();
 
     for i in 1..10 {
         info!("#{i}: Sending empty message...");
-        agent.publish_message("emptyMessages", None).unwrap();
+        agent.publish_message(&empty_message_output, None).unwrap();
 
         let bool = i % 2 == 0;
         info!("#{i}: Sending boolean message...");
         agent
-            .publish_message("booleanMessages", Some(&[bool.into()]))
+            .publish_message(&boolean_message_output, Some(&[bool.into()]))
             .unwrap();
 
         thread::sleep(Duration::from_millis(1000))
