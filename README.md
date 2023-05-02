@@ -1,6 +1,52 @@
 # Tether Agent for Rust
 
-This "Base Agent" implementation assumes that the client (your application) will retain ownership any Input and Output Plugs, as well as the instance of the TetherAgent struct.
+## Examples
+
+Create an agent, specify `None` for to use defaults for MQTT Broker IP address and/or Agent ID (Group): 
+```
+    let agent = TetherAgent::new("RustDemoAgent", None, None);
+    agent.connect();
+```
+
+Create an Output Plug:
+```
+    let custom_output = agent.create_output_plug("custom", None, None).unwrap();
+
+```
+
+If your data structure can be Serialised using serde, go ahead and encode+publish in one step:
+```
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct CustomStruct {
+    foo: String,
+    bar: f32,
+}
+/// ...
+        let custom_message = CustomStruct {
+            foo: "hello".into(),
+            bar: 0.42,
+        };
+        agent
+            .encode_and_publish(&custom_output, custom_message)
+            .unwrap();
+```
+
+Or create an Input Plug:
+```
+    let input_one = agent.create_input_plug("one", None, None).unwrap();
+```
+
+And check for messages synchronously:
+```
+if let Some((plug_name, message)) = agent.check_messages() {
+            if &input_one.name == plug_name.as_str() {
+               // Always check against the plug name(s) you're looking for!
+```
+
+## Approach
+
+This "Base Agent" implementation assumes that the client (your application) will retain ownership of any Input and Output Plugs, as well as the instance of the TetherAgent struct.
 
 This means that the TetherAgent retains no "memory" of any Input or Output Plugs that you have created. 
 Therefore, you must keep your own individual variables which reference the Plugs you have created, or store them in a `Vec<&PlugDefinition>` as necessary.
@@ -14,6 +60,8 @@ The following functions can be called on the `TetherAgent` instance:
 In both cases, you provide a pointer to the `PlugDefinition` so that the Agent can publish on the appropriate topic with the correct QOS for the plug.
 
 ## Subscribing
+The `create_input_plug` function has a side effect: the client subscription.
+
 For now, checking messages is done synchronously. The same function should be called as often as possible (e.g. once per frame or on a timed thread, etc.) on the `TetherAgent` instance:
 
 - `check_messages`
