@@ -12,7 +12,7 @@ fn main() {
 
     debug!("Debugging is enabled; could be verbose");
 
-    let mut agent = TetherAgent::new("RustDemoAgent", Some("example"), None);
+    let agent = TetherAgent::new("RustDemoAgent", Some("example"), None);
 
     agent.connect();
 

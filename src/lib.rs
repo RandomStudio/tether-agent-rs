@@ -80,7 +80,7 @@ impl TetherAgent {
     }
 
     pub fn create_input_plug(
-        &mut self,
+        &self,
         name: &str,
         qos: Option<i32>,
         override_topic: Option<&str>,
@@ -105,7 +105,7 @@ impl TetherAgent {
     }
 
     pub fn create_output_plug(
-        &mut self,
+        &self,
         name: &str,
         qos: Option<i32>,
         override_topic: Option<&str>,
