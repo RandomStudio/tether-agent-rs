@@ -35,6 +35,14 @@ impl TetherAgent {
         (&self.role, &self.id)
     }
 
+    pub fn set_role(&mut self, role: &str) {
+        self.role = role.into();
+    }
+
+    pub fn set_id(&mut self, id: &str) {
+        self.id = id.into();
+    }
+
     pub fn new(role: &str, id: Option<&str>, broker_host: Option<IpAddr>) -> Self {
         let tether_host = broker_host.unwrap_or(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)));
 
