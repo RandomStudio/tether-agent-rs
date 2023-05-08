@@ -14,12 +14,14 @@ struct CustomStruct {
 fn main() {
     println!("Rust Tether Agent publish example");
 
-    let mut builder = Builder::from_env(Env::default().default_filter_or("debug"));
+    let mut builder = Builder::from_env(Env::default().default_filter_or("info"));
     builder.init();
 
     debug!("Debugging is enabled; could be verbose");
 
     let agent = TetherAgent::new("RustDemoAgent", None, None);
+    let (role, id) = agent.description();
+    info!("Created agent OK: {}, {}", role, id);
 
     agent.connect();
 
