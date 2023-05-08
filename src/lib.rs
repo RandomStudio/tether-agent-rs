@@ -4,14 +4,16 @@ pub use paho_mqtt as mqtt;
 pub use rmp_serde;
 use rmp_serde::to_vec_named;
 pub use serde;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::{
     net::{IpAddr, Ipv4Addr},
     process,
     time::Duration,
 };
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+
 pub struct PlugDefinition {
     pub name: String,
     pub topic: String,
