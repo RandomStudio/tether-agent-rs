@@ -181,7 +181,7 @@ impl TetherAgent {
     }
 }
 
-fn parse_plug_name(topic: &str) -> &str {
+pub fn parse_plug_name(topic: &str) -> &str {
     let parts: Vec<&str> = topic.split('/').collect();
     parts[2]
 }
