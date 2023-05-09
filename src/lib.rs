@@ -191,6 +191,11 @@ pub fn parse_agent_id(topic: &str) -> &str {
     parts[1]
 }
 
+pub fn parse_agent_role(topic: &str) -> &str {
+    let parts: Vec<&str> = topic.split('/').collect();
+    parts[0]
+}
+
 pub fn build_topic(role: &str, id: &str, plug_name: &str) -> String {
     format!("{role}/{id}/{plug_name}")
 }
