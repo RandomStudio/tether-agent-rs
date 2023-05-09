@@ -24,6 +24,7 @@ pub struct TetherAgent {
     role: String,
     id: String,
     client: Client,
+    broker_uri: String,
     receiver: Receiver<Option<Message>>,
 }
 
@@ -32,9 +33,15 @@ impl TetherAgent {
         self.client.is_connected()
     }
 
-    // Returns the Agent Role and ID (group)
+    /// Returns the Agent Role and ID (group)
     pub fn description(&self) -> (&str, &str) {
         (&self.role, &self.id)
+    }
+
+    /// Return the URI (protocol, IP address, port, path) that
+    /// was used to connect to the MQTT broker
+    pub fn broker_uri(&self) -> &str {
+        &self.broker_uri
     }
 
     pub fn set_role(&mut self, role: &str) {
@@ -53,7 +60,7 @@ impl TetherAgent {
         info!("Attempt connection broker at {}", &broker_uri);
 
         let create_opts = mqtt::CreateOptionsBuilder::new()
-            .server_uri(broker_uri)
+            .server_uri(broker_uri.clone())
             .client_id("")
             .finalize();
 
@@ -68,6 +75,7 @@ impl TetherAgent {
             id: String::from(id.unwrap_or("any")),
             client,
             receiver,
+            broker_uri: broker_uri.clone(),
         }
     }
 
@@ -135,8 +143,7 @@ impl TetherAgent {
         Ok(plug)
     }
 
-    /// Given a list of Plug Definitions, check for matches against plug name (using parsed topic)
-    /// and if a message is waiting, and a match is found, return Plug Name, Message (String, Message)
+    /// If a message is waiting return Plug Name, Message (String, Message)
     pub fn check_messages(&self) -> Option<(String, Message)> {
         if let Some(message) = self.receiver.try_iter().find_map(|m| m) {
             let topic = message.topic();
@@ -147,6 +154,8 @@ impl TetherAgent {
         }
     }
 
+    /// Given a plug definition and a raw (u8 buffer) payload, generate a message
+    /// on an appropriate topic and with the QOS specified in the Plug Definition
     pub fn publish(&self, plug: &PlugDefinition, payload: Option<&[u8]>) -> Result<(), ()> {
         let message = MessageBuilder::new()
             .topic(&plug.topic)
@@ -161,6 +170,7 @@ impl TetherAgent {
         }
     }
 
+    /// Similar to `publish` but serializes the data automatically before sending
     pub fn encode_and_publish<T: Serialize>(
         &self,
         plug: &PlugDefinition,
