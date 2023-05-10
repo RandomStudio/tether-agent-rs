@@ -11,9 +11,8 @@ use std::{
     time::Duration,
 };
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
-
 pub struct PlugDefinition {
     pub name: String,
     pub topic: String,
