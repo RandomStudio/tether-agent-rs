@@ -7,7 +7,6 @@ pub use serde;
 use serde::{Deserialize, Serialize};
 use std::{
     net::{IpAddr, Ipv4Addr},
-    process,
     time::Duration,
 };
 
@@ -78,7 +77,7 @@ impl TetherAgent {
         }
     }
 
-    pub fn connect(&self) {
+    pub fn connect(&self) -> Result<(), mqtt::Error> {
         let conn_opts = mqtt::ConnectOptionsBuilder::new()
             .user_name("tether")
             .password("sp_ceB0ss!")
@@ -93,10 +92,11 @@ impl TetherAgent {
         match self.client.connect(conn_opts) {
             Ok(res) => {
                 info!("Connected OK: {res:?}");
+                Ok(())
             }
             Err(e) => {
                 error!("Error connecting to the broker: {e:?}");
-                process::exit(1);
+                Err(e)
             }
         }
     }
