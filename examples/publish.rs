@@ -23,7 +23,7 @@ fn main() {
     let (role, id) = agent.description();
     info!("Created agent OK: {}, {}", role, id);
 
-    agent.connect();
+    agent.connect().expect("Failed to connect");
 
     let empty_message_output: tether_agent::PlugDefinition =
         agent.create_output_plug("nothing", None, None).unwrap();

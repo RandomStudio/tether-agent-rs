@@ -14,7 +14,7 @@ fn main() {
 
     let agent = TetherAgent::new("RustDemoAgent", Some("example"), None);
 
-    agent.connect();
+    agent.connect().expect("Failed to connect");
 
     let input_one = agent.create_input_plug("one", None, None).unwrap();
     let input_two = agent.create_input_plug("two", None, None).unwrap();
