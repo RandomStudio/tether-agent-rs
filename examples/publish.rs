@@ -30,7 +30,7 @@ fn main() {
     let boolean_message_output = agent.create_output_plug("one", None, None).unwrap();
     let custom_output = agent.create_output_plug("two", None, None).unwrap();
 
-    for i in 1..10 {
+    for i in 1..=10 {
         info!("#{i}: Sending empty message...");
         agent.publish(&empty_message_output, None).unwrap();
 
