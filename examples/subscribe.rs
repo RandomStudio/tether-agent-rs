@@ -18,6 +18,7 @@ fn main() {
 
     let input_one = agent.create_input_plug("one", None, None).unwrap();
     let input_two = agent.create_input_plug("two", None, None).unwrap();
+    let input_empty = agent.create_input_plug("nothing", None, None).unwrap();
 
     info!("Checking messages every 1s, 10x...");
 
@@ -36,6 +37,14 @@ fn main() {
                 println!(
                     "******** INPUT TWO:\n Received a message from plug named \"{}\" on topic {} with length {} bytes",
                     input_two.name,
+                    message.topic(),
+                    message.payload().len()
+                );
+            }
+            if &input_empty.name == plug_name.as_str() {
+                println!(
+                    "******** EMPTY MESSAGE:\n Received a message from plug named \"{}\" on topic {} with length {} bytes",
+                    input_empty.name,
                     message.topic(),
                     message.payload().len()
                 );

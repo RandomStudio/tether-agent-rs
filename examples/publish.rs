@@ -25,13 +25,10 @@ fn main() {
 
     agent.connect();
 
-    let empty_message_output = agent
-        .create_output_plug("emptyMessage", None, None)
-        .unwrap();
-    let boolean_message_output = agent
-        .create_output_plug("booleanMessage", None, None)
-        .unwrap();
-    let custom_output = agent.create_output_plug("custom", None, None).unwrap();
+    let empty_message_output: tether_agent::PlugDefinition =
+        agent.create_output_plug("nothing", None, None).unwrap();
+    let boolean_message_output = agent.create_output_plug("one", None, None).unwrap();
+    let custom_output = agent.create_output_plug("two", None, None).unwrap();
 
     for i in 1..10 {
         info!("#{i}: Sending empty message...");
