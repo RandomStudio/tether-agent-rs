@@ -82,7 +82,7 @@ impl TetherAgent {
             .user_name("tether")
             .password("sp_ceB0ss!")
             .keep_alive_interval(Duration::from_secs(30))
-            .mqtt_version(mqtt::MQTT_VERSION_3_1_1)
+            // .mqtt_version(mqtt::MQTT_VERSION_3_1_1)
             .clean_session(true)
             .finalize();
 
