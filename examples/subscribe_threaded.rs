@@ -33,7 +33,7 @@ fn main() {
 
     match agent.lock() {
         Ok(a) => {
-            a.connect().expect("failed to connect");
+            a.connect(None, None).expect("failed to connect");
             a.create_input_plug("one", None, None)
                 .expect("failed to create Input Plug");
         }

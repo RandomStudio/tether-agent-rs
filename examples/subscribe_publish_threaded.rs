@@ -39,7 +39,7 @@ fn main() {
 
     // Here we call .lock() because it is OK to block while "setting up", connecting
     if let Ok(a) = agent.lock() {
-        a.connect().expect("failed to connect");
+        a.connect(None, None).expect("failed to connect");
         a.create_input_plug("one", None, None)
             .expect("failed to create Input Plug");
         let plug = a

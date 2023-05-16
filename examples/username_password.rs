@@ -1,4 +1,4 @@
-use std::{thread, time::Duration};
+use std::{net::Ipv4Addr, thread, time::Duration};
 
 use env_logger::{Builder, Env};
 use log::{debug, info};
@@ -12,18 +12,24 @@ struct CustomStruct {
     bar: f32,
 }
 fn main() {
-    println!("Rust Tether Agent publish example");
+    println!("Rust Tether Agent: with username and password");
 
     let mut builder = Builder::from_env(Env::default().default_filter_or("info"));
     builder.init();
 
     debug!("Debugging is enabled; could be verbose");
 
-    let agent = TetherAgent::new("RustDemoAgent", None, None);
+    let agent = TetherAgent::new(
+        "RustDemoAgent",
+        None,
+        Some(std::net::IpAddr::V4(Ipv4Addr::new(10, 112, 10, 10))),
+    );
     let (role, id) = agent.description();
     info!("Created agent OK: {}, {}", role, id);
 
-    agent.connect(None, None).expect("Failed to connect");
+    agent
+        .connect(Some("connected.space"), Some("connected.space"))
+        .expect("Failed to connect");
 
     let empty_message_output: tether_agent::PlugDefinition =
         agent.create_output_plug("nothing", None, None).unwrap();

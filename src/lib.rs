@@ -77,10 +77,10 @@ impl TetherAgent {
         }
     }
 
-    pub fn connect(&self) -> Result<(), mqtt::Error> {
+    pub fn connect(&self, user: Option<&str>, password: Option<&str>) -> Result<(), mqtt::Error> {
         let conn_opts = mqtt::ConnectOptionsBuilder::new()
-            .user_name("tether")
-            .password("sp_ceB0ss!")
+            .user_name(user.unwrap_or("tether"))
+            .password(password.unwrap_or("sp_ceB0ss!"))
             .keep_alive_interval(Duration::from_secs(30))
             // .mqtt_version(mqtt::MQTT_VERSION_3_1_1)
             .clean_session(true)
