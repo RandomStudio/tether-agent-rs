@@ -150,8 +150,11 @@ impl TetherAgent {
     pub fn check_messages(&self) -> Option<(String, Message)> {
         if let Some(message) = self.receiver.try_iter().find_map(|m| m) {
             let topic = message.topic();
-            let plug_name = parse_plug_name(topic);
-            Some((String::from(plug_name), message))
+            if let Some(plug_name) = parse_plug_name(topic) {
+                Some((String::from(plug_name), message))
+            } else {
+                None
+            }
         } else {
             None
         }
@@ -184,19 +187,28 @@ impl TetherAgent {
     }
 }
 
-pub fn parse_plug_name(topic: &str) -> &str {
+pub fn parse_plug_name(topic: &str) -> Option<&str> {
     let parts: Vec<&str> = topic.split('/').collect();
-    parts[2]
+    match parts.get(2) {
+        Some(s) => Some(*s),
+        None => None,
+    }
 }
 
-pub fn parse_agent_id(topic: &str) -> &str {
+pub fn parse_agent_id(topic: &str) -> Option<&str> {
     let parts: Vec<&str> = topic.split('/').collect();
-    parts[1]
+    match parts.get(1) {
+        Some(s) => Some(*s),
+        None => None,
+    }
 }
 
-pub fn parse_agent_role(topic: &str) -> &str {
+pub fn parse_agent_role(topic: &str) -> Option<&str> {
     let parts: Vec<&str> = topic.split('/').collect();
-    parts[0]
+    match parts.get(0) {
+        Some(s) => Some(*s),
+        None => None,
+    }
 }
 
 pub fn build_topic(role: &str, id: &str, plug_name: &str) -> String {
