@@ -27,7 +27,7 @@ fn main() {
     let publish_count_target = 100;
     let publish_interval = 0.1;
 
-    println!("Rust Tether Agent subscribe example");
+    println!("Rust Tether Agent threaded publish-while-consuming example");
 
     let agent = Arc::new(Mutex::new(TetherAgent::new(
         "RustDemoAgent",

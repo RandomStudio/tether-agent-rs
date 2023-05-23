@@ -10,6 +10,8 @@ use std::{
     time::Duration,
 };
 
+const TIMEOUT_SECONDS: u64 = 10;
+
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct PlugDefinition {
@@ -85,7 +87,8 @@ impl TetherAgent {
         let conn_opts = mqtt::ConnectOptionsBuilder::new()
             .user_name(user.unwrap_or(String::from("tether")))
             .password(password.unwrap_or(String::from("sp_ceB0ss!")))
-            .keep_alive_interval(Duration::from_secs(30))
+            .connect_timeout(Duration::from_secs(TIMEOUT_SECONDS))
+            .keep_alive_interval(Duration::from_secs(TIMEOUT_SECONDS))
             // .mqtt_version(mqtt::MQTT_VERSION_3_1_1)
             .clean_session(true)
             .finalize();
@@ -100,6 +103,8 @@ impl TetherAgent {
             }
             Err(e) => {
                 error!("Error connecting to the broker: {e:?}");
+                // self.client.stop_consuming();
+                // self.client.disconnect(None).expect("failed to disconnect");
                 Err(e)
             }
         }
